@@ -60,7 +60,7 @@ void dm(char*name, float matrix[]) {
 #ifdef __MACH__
 
 #include <sys/time.h>
-#define CLOCK_MONOTONIC 0
+// #define CLOCK_MONOTONIC 0
 int clock_gettime(int clock_id, struct timespec* t);
 
 int clock_gettime(int clock_id, struct timespec* t){
@@ -113,50 +113,3 @@ int compute_timer_fps(g_timer* counter) {
 	int fps =  1/(diff / 1000000000.0);
 	return fps;
 }
-
-
-// CPU cycle profiling
-
-/*
- * Returns the processor time stamp. The processor time stamp records the number of clock cycles since the last reset
-*/
-//#include <stdint.h>
-#ifdef _WIN32
-#include <intrin.h>
-uint64_t rdtsc(){
-    return __rdtsc();
-}
-#else
-// Linux/GCC
-uint64_t rdtsc(){
-    unsigned int lo,hi;
-    __asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
-    return ((uint64_t)hi << 32) | lo;
-}
-#endif
-
-struct debug_record {
-	char tag[17];
-	char* file_name;
-	int line_number;
-	uint64_t clocks;
-};
-
-struct cpu_timestamp {
-	struct debug_record record;
-
-	cpu_timestamp(int line_number, char* file_name,const char tag[17] ) {
-		// __FUNCTION__ is defined by the compiler not the preprocessor. Copying the string is the workaround i found.
-		strcpy(record.tag, tag);
-		record.file_name = file_name;
-		record.line_number = line_number;
-		
-		record.clocks = - rdtsc();
-	}
-
-	~cpu_timestamp() {
-		record.clocks += rdtsc();
-		printf("ln: %d %s %s clocks: %lld \n", record.line_number, record.file_name, record.tag, record.clocks);
-	}
-};
-#define TIMED_BLOCK struct cpu_timestamp temp_cpu_timestamp(__LINE__, __FILE__, __FUNCTION__)

@@ -59,9 +59,8 @@ void print_fun(const char* f) {
     printf("%s\n", f);
 }
 void update_particles(int number_particles, float gravity, float* points_vertices, float *points_speed) {
-	//start_timer(&general_timer2);
-	print_fun(__FUNCTION__);
-    TIMED_BLOCK;
+	// start_timer(&general_timer2);
+	// print_fun(__FUNCTION__);
     int idx = 0;
 	float3* rand_unit_sphere;
 	float attenuate = 0.1;

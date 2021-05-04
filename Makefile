@@ -10,8 +10,7 @@ BIN := $(BIN).exe
 else
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Darwin)
-		LIBS := -lglfw -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo -lm -lGLEW -L/usr/local/lib
-		CFLAGS += -I/usr/local/include
+		LIBS := -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo -lm -lGLEW `pkg-config --cflags --libs glfw3` `pkg-config --cflags --libs GLEW`
 	else
 		LIBS := -lglfw -lGL -lm -lGLU -lGLEW
 	endif
